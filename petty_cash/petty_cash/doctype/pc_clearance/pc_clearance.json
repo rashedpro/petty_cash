@@ -1,0 +1,187 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:CLR-{employee}-{date}-{#}",
+ "creation": "2023-11-24 08:57:32.988234",
+ "default_view": "List",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "date",
+  "project",
+  "company",
+  "column_break_ic6h8",
+  "employee",
+  "previous_balance",
+  "clearance_date",
+  "clearance_journal_entry",
+  "section_break_fbpbc",
+  "clearance_details",
+  "stock_item_details",
+  "section_break_xrcfr",
+  "total_expense_without_tax",
+  "column_break_tngfv",
+  "total_expense",
+  "total_petty_cash",
+  "remaining_amount",
+  "section_break_zyjcs",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "default": "Today",
+   "fieldname": "date",
+   "fieldtype": "Date",
+   "label": "Transaction Date"
+  },
+  {
+   "fieldname": "project",
+   "fieldtype": "Link",
+   "label": "Project",
+   "options": "Project"
+  },
+  {
+   "fieldname": "column_break_ic6h8",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "employee",
+   "fieldtype": "Link",
+   "label": "Employee",
+   "options": "Employee"
+  },
+  {
+   "description": "as on <b>Transaction Date</b>",
+   "fieldname": "previous_balance",
+   "fieldtype": "Currency",
+   "label": "Pending Amount",
+   "options": "Company:company:default_currency",
+   "precision": "2",
+   "read_only": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "PC Clearance",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company"
+  },
+  {
+   "fieldname": "section_break_fbpbc",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "clearance_details",
+   "fieldtype": "Table",
+   "label": "Clearance Details",
+   "options": "PC Clearance Detail"
+  },
+  {
+   "fieldname": "stock_item_details",
+   "fieldtype": "Table",
+   "label": "Stock Item Details",
+   "options": "PC Stock Item Expense Detail",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_xrcfr",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_tngfv",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_expense",
+   "fieldtype": "Currency",
+   "label": "Total Expense(A)",
+   "options": "Company:company:default_currency",
+   "precision": "2",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_petty_cash",
+   "fieldtype": "Currency",
+   "label": "Total Petty Cash(B)",
+   "options": "Company:company:default_currency",
+   "precision": "2",
+   "read_only": 1
+  },
+  {
+   "fieldname": "remaining_amount",
+   "fieldtype": "Currency",
+   "label": "Remaining Amount(A-B)",
+   "options": "Company:company:default_currency",
+   "precision": "2",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_zyjcs",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "clearance_journal_entry",
+   "fieldtype": "Data",
+   "label": "Clearance Journal Entry",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_expense_without_tax",
+   "fieldtype": "Currency",
+   "label": "Total Expense Without Tax",
+   "options": "Company:company:default_currency",
+   "read_only": 1
+  },
+  {
+   "default": "Today",
+   "description": "It is used in Journal Entry",
+   "fieldname": "clearance_date",
+   "fieldtype": "Date",
+   "label": "JE Clearance Date"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [
+  {
+   "link_doctype": "Journal Entry",
+   "link_fieldname": "custom_pc_clearance_reference"
+  },
+  {
+   "link_doctype": "Purchase Invoice",
+   "link_fieldname": "custom_pc_clearance_reference"
+  }
+ ],
+ "modified": "2023-11-29 09:09:30.131419",
+ "modified_by": "Administrator",
+ "module": "Petty Cash",
+ "name": "PC Clearance",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

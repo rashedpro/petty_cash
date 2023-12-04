@@ -1,0 +1,116 @@
+{
+ "actions": [],
+ "allow_import": 1,
+ "allow_rename": 1,
+ "autoname": "field:expense_type",
+ "creation": "2023-11-23 09:32:03.068872",
+ "default_view": "List",
+ "doctype": "DocType",
+ "document_type": "Setup",
+ "engine": "InnoDB",
+ "field_order": [
+  "expense_type",
+  "is_non_stock_expense_type",
+  "column_break_myfto",
+  "allowed_percent_of_total_clearance",
+  "max_allowed_amt_wo_tax",
+  "item_and_account_section_custom",
+  "default_non_stock_item",
+  "accounts",
+  "section_break_gn59n",
+  "description"
+ ],
+ "fields": [
+  {
+   "fieldname": "expense_type",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Expense Claim Type",
+   "oldfieldname": "expense_type",
+   "oldfieldtype": "Data",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "column_break_myfto",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "allowed_percent_of_total_clearance",
+   "fieldtype": "Percent",
+   "label": "% Allowed of Total Clearance Without Tax",
+   "precision": "1"
+  },
+  {
+   "fieldname": "max_allowed_amt_wo_tax",
+   "fieldtype": "Currency",
+   "label": "Max. Allowed Amount Without Tax"
+  },
+  {
+   "description": "for taxable non-stock Item's Purchase Invoice[Expense Head]\nNote: for stock items, in PI default erpnext expense head gets used. ",
+   "fieldname": "accounts",
+   "fieldtype": "Table",
+   "label": "<b>Expense Accounts</b>",
+   "mandatory_depends_on": "eval:doc.is_non_stock_expense_type==1",
+   "options": "Expense Claim Account"
+  },
+  {
+   "fieldname": "section_break_gn59n",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Small Text",
+   "label": "Description",
+   "oldfieldname": "description",
+   "oldfieldtype": "Small Text",
+   "width": "300px"
+  },
+  {
+   "depends_on": "eval:doc.is_non_stock_expense_type==1",
+   "fieldname": "item_and_account_section_custom",
+   "fieldtype": "Section Break"
+  },
+  {
+   "description": "When expense is taxable, this item will be used in Purchase Invoice",
+   "fieldname": "default_non_stock_item",
+   "fieldtype": "Link",
+   "label": "<b>Default Non-Stock Item</b>",
+   "mandatory_depends_on": "eval:doc.is_non_stock_expense_type==1",
+   "options": "Item"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_non_stock_expense_type",
+   "fieldtype": "Check",
+   "label": "Is Non-Stock Expense Type?"
+  }
+ ],
+ "icon": "fa fa-flag",
+ "links": [],
+ "modified": "2023-11-28 17:09:29.182367",
+ "modified_by": "Administrator",
+ "module": "Petty Cash",
+ "name": "PC Expense Type",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "read": 1,
+   "role": "Employee"
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "ASC",
+ "states": []
+}

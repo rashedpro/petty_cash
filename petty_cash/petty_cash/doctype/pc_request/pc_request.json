@@ -1,0 +1,157 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:REQ-{employee}-{date}-{#}",
+ "creation": "2023-11-23 10:36:07.203496",
+ "default_view": "List",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "date",
+  "company",
+  "project",
+  "employee",
+  "employee_name",
+  "status",
+  "column_break_tsjdg",
+  "petty_cash_account",
+  "payment_status",
+  "actual_paid_amount",
+  "total_amount",
+  "previous_balance",
+  "section_break_piubs",
+  "expense_details",
+  "section_break_lfyvc",
+  "remark"
+ ],
+ "fields": [
+  {
+   "default": "Today",
+   "fieldname": "date",
+   "fieldtype": "Date",
+   "label": "Transaction Date"
+  },
+  {
+   "fieldname": "project",
+   "fieldtype": "Link",
+   "label": "Project",
+   "options": "Project"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Data",
+   "label": "Status"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company"
+  },
+  {
+   "fieldname": "total_amount",
+   "fieldtype": "Currency",
+   "label": "Total Requested Amount",
+   "options": "Company:company:default_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_tsjdg",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "__user",
+   "fieldname": "employee",
+   "fieldtype": "Link",
+   "label": "Employee",
+   "options": "Employee"
+  },
+  {
+   "fieldname": "petty_cash_account",
+   "fieldtype": "Link",
+   "label": "Petty Cash Account",
+   "options": "Account",
+   "read_only": 1
+  },
+  {
+   "default": "Not Paid",
+   "fieldname": "payment_status",
+   "fieldtype": "Select",
+   "label": "Payment Status",
+   "options": "Not Paid\nPartially Paid\nFully Paid",
+   "read_only": 1
+  },
+  {
+   "description": "as per payment entry",
+   "fieldname": "actual_paid_amount",
+   "fieldtype": "Currency",
+   "label": "Actual Paid Amount",
+   "options": "Company:company:default_currency",
+   "read_only": 1
+  },
+  {
+   "description": "as on <b>Transaction Date</b>",
+   "fieldname": "previous_balance",
+   "fieldtype": "Currency",
+   "label": "Previous Balance",
+   "options": "Company:company:default_currency"
+  },
+  {
+   "fieldname": "section_break_piubs",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "expense_details",
+   "fieldtype": "Table",
+   "label": "Expense Details",
+   "options": "PC Request Expense Detail"
+  },
+  {
+   "fieldname": "section_break_lfyvc",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "remark",
+   "fieldtype": "Small Text",
+   "label": "Remark"
+  },
+  {
+   "fetch_from": "employee.employee_name",
+   "fieldname": "employee_name",
+   "fieldtype": "Data",
+   "label": "Employee Name",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [
+  {
+   "link_doctype": "Payment Entry",
+   "link_fieldname": "custom_pc_request_reference"
+  }
+ ],
+ "modified": "2023-11-28 17:20:26.710074",
+ "modified_by": "Administrator",
+ "module": "Petty Cash",
+ "name": "PC Request",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

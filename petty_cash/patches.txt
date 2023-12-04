@@ -1,0 +1,3 @@
+petty_cash.patches.create_pc_request_reference_in_payment_entry
+petty_cash.patches.create_pc_clearance_reference_in_journal_entry
+petty_cash.patches.create_pc_clearance_reference_in_purchase_invoice

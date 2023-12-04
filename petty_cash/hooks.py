@@ -118,13 +118,12 @@ app_license = "MIT"
 # ---------------
 # Hook on document methods and events
 
-# doc_events = {
-#	"*": {
-#		"on_update": "method",
-#		"on_cancel": "method",
-#		"on_trash": "method"
-#	}
-# }
+doc_events = {
+	"Payment Entry": {
+		"on_submit": "petty_cash.petty_cash.doctype.pc_request.pc_request.update_pc_request_fields",
+        "on_cancel":"petty_cash.petty_cash.doctype.pc_request.pc_request.update_pc_request_fields"
+	}
+}
 
 # Scheduled Tasks
 # ---------------

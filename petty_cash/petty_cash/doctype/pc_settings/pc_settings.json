@@ -1,0 +1,52 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2023-11-23 07:49:48.786131",
+ "default_view": "List",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "default_petty_cash_accounts",
+  "zero_tax_template_for_purchase_expenses"
+ ],
+ "fields": [
+  {
+   "description": "It will be used in 'Account Paid To' of Payment Entry",
+   "fieldname": "default_petty_cash_accounts",
+   "fieldtype": "Table",
+   "label": "<b>Default Petty Cash Account</b>",
+   "options": "PC Petty Cash Account Detail"
+  },
+  {
+   "description": "Ex : Material",
+   "fieldname": "zero_tax_template_for_purchase_expenses",
+   "fieldtype": "Table",
+   "label": "<b>Zero Tax Template for Purchase of Stock Expense Type</b>",
+   "options": "PC Purchase Taxes Template Detail"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2023-11-28 17:06:36.049402",
+ "modified_by": "Administrator",
+ "module": "Petty Cash",
+ "name": "PC Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
