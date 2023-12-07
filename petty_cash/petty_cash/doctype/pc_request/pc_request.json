@@ -23,7 +23,8 @@
   "section_break_piubs",
   "expense_details",
   "section_break_lfyvc",
-  "remark"
+  "remark",
+  "amended_from"
  ],
  "fields": [
   {
@@ -95,7 +96,8 @@
    "fieldname": "previous_balance",
    "fieldtype": "Currency",
    "label": "Previous Balance",
-   "options": "Company:company:default_currency"
+   "options": "Company:company:default_currency",
+   "read_only": 1
   },
   {
    "fieldname": "section_break_piubs",
@@ -122,16 +124,26 @@
    "fieldtype": "Data",
    "label": "Employee Name",
    "read_only": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "PC Request",
+   "print_hide": 1,
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
+ "is_submittable": 1,
  "links": [
   {
    "link_doctype": "Payment Entry",
    "link_fieldname": "custom_pc_request_reference"
   }
  ],
- "modified": "2023-11-28 17:20:26.710074",
+ "modified": "2023-12-07 08:27:40.267403",
  "modified_by": "Administrator",
  "module": "Petty Cash",
  "name": "PC Request",

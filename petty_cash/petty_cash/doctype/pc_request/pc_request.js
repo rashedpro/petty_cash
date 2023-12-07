@@ -3,7 +3,7 @@
 
 frappe.ui.form.on('PC Request', {
 	refresh:function (frm) {
-	if (frm.is_new()==undefined) {
+	if (frm.doc.docstatus==1) {
 		frm.add_custom_button('Make PE', () => {
 			make_payment_entry(frm)
 		})
