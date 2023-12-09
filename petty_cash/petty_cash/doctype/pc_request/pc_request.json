@@ -11,15 +11,17 @@
   "date",
   "company",
   "project",
+  "column_break_tsjdg",
   "employee",
   "employee_name",
   "status",
-  "column_break_tsjdg",
+  "section_break_rtcvu",
   "petty_cash_account",
   "payment_status",
   "actual_paid_amount",
-  "total_amount",
+  "column_break_jjpaj",
   "previous_balance",
+  "total_amount",
   "section_break_piubs",
   "expense_details",
   "section_break_lfyvc",
@@ -31,7 +33,9 @@
    "default": "Today",
    "fieldname": "date",
    "fieldtype": "Date",
-   "label": "Transaction Date"
+   "in_list_view": 1,
+   "label": "Transaction Date",
+   "reqd": 1
   },
   {
    "fieldname": "project",
@@ -47,8 +51,10 @@
   {
    "fieldname": "company",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Company",
-   "options": "Company"
+   "options": "Company",
+   "reqd": 1
   },
   {
    "fieldname": "total_amount",
@@ -65,8 +71,10 @@
    "default": "__user",
    "fieldname": "employee",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Employee",
-   "options": "Employee"
+   "options": "Employee",
+   "reqd": 1
   },
   {
    "fieldname": "petty_cash_account",
@@ -133,6 +141,14 @@
    "options": "PC Request",
    "print_hide": 1,
    "read_only": 1
+  },
+  {
+   "fieldname": "section_break_rtcvu",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_jjpaj",
+   "fieldtype": "Column Break"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -143,7 +159,7 @@
    "link_fieldname": "custom_pc_request_reference"
   }
  ],
- "modified": "2023-12-07 08:27:40.267403",
+ "modified": "2023-12-09 06:58:22.014972",
  "modified_by": "Administrator",
  "module": "Petty Cash",
  "name": "PC Request",

@@ -210,7 +210,7 @@ debugger
 				frm.refresh_field('stock_item_details')
 				dialog.hide();
 			},
-			primary_action_label: __('Reconcile Entries')
+			primary_action_label: __('Done')
 		});
 
 		if (frm.doc.stock_item_details) {

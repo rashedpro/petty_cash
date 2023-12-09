@@ -96,12 +96,13 @@ class PCClearance(Document):
 		total_petty_cash=0
 		remaining_amount=0
 		total_expense_without_tax=0
-		for clearance_item in self.clearance_details:
-			total_expense=total_expense+clearance_item.amount_with_tax
-			total_expense_without_tax=total_expense_without_tax+clearance_item.amount
+		if len(self.clearance_details)>0:
+			for clearance_item in self.clearance_details:
+				total_expense=total_expense+ (clearance_item.amount_with_tax or 0)
+				total_expense_without_tax=total_expense_without_tax+ (clearance_item.amount or 0)
 		self.total_expense_without_tax=total_expense_without_tax
 		self.total_expense=total_expense
-		self.total_petty_cash=self.previous_balance
+		self.total_petty_cash=self.previous_balance or 0
 		self.remaining_amount=self.total_expense-self.total_petty_cash
 
 	def get_default_petty_cash_account(self):
