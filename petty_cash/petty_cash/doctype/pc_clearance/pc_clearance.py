@@ -34,6 +34,9 @@ class PCClearance(Document):
 		self.create_je_for_non_taxable_and_non_stock_items(default_petty_cash_account)
 		self.create_pi_for_taxable_items()
 		self.clearance_journal_entry=self.create_consolidated_clearance_journal_entry(default_petty_cash_account)
+	# def on_submit(self):
+	# 	default_petty_cash_account=self.get_default_petty_cash_account()
+	# 	self.clearance_journal_entry=self.create_consolidated_clearance_journal_entry(default_petty_cash_account)
 
 	def validate_allowed_expense_of_total_amount(self):
 		for clearance_item in self.clearance_details:
@@ -46,12 +49,10 @@ class PCClearance(Document):
 					if expense_type_to_check==clearance_item_to_check.expense_type:
 						expense_type_to_check_total_amount=expense_type_to_check_total_amount+clearance_item_to_check.amount
 				if max_allowed_amt_wo_tax>0 and expense_type_to_check_total_amount>max_allowed_amt_wo_tax:
-					frappe.throw(_("For expense type {0}, Max. Allowed Amount Without Tax is {1} whereas actual is {2}.".format
-					(clearance_item.expense_type,frappe.bold(max_allowed_amt_wo_tax),frappe.bold(expense_type_to_check_total_amount))))						
+					frappe.throw(_("For expense type {0}, Max. Allowed Amount Without Tax is {1} whereas actual is {2}.".format(clearance_item.expense_type,frappe.bold(max_allowed_amt_wo_tax),frappe.bold(expense_type_to_check_total_amount))))						
 				expense_type_to_check_actual_per=flt((expense_type_to_check_total_amount/self.total_expense_without_tax)*100,2)
 				if expense_type_to_check_actual_per>allowed_percent_of_total_clearance:
-					frappe.throw(_("For expense type {0}, allowed percentage of total without tax is {1} % whereas actual is {2} %.".format
-					(clearance_item.expense_type,frappe.bold(allowed_percent_of_total_clearance),frappe.bold(expense_type_to_check_actual_per))))		
+					frappe.throw(_("For expense type {0}, allowed percentage of total without tax is {1} % whereas actual is {2} %.".format(clearance_item.expense_type,frappe.bold(allowed_percent_of_total_clearance),frappe.bold(expense_type_to_check_actual_per))))		
 
 
 
@@ -151,10 +152,11 @@ class PCClearance(Document):
 				expense_type=clearance_item.expense_type
 				is_tax_applicable=clearance_item.is_tax_applicable
 				expense_date=clearance_item.expense_date
-				clearance_item.pi_jv_reference=self.create_purchase_invoice(supplier,bill_no,project,cost_center,clearance_detail_row_idx,is_non_stock_expense_type,expense_type,is_tax_applicable,expense_date)
+				rate_of_non_stock_and_taxable=clearance_item.amount
+				clearance_item.pi_jv_reference=self.create_purchase_invoice(supplier,bill_no,project,cost_center,clearance_detail_row_idx,is_non_stock_expense_type,expense_type,is_tax_applicable,expense_date,rate_of_non_stock_and_taxable)
 
 
-	def create_purchase_invoice(self,supplier,bill_no,project,cost_center,clearance_detail_row_idx,is_non_stock_expense_type,expense_type,is_tax_applicable,expense_date):
+	def create_purchase_invoice(self,supplier,bill_no,project,cost_center,clearance_detail_row_idx,is_non_stock_expense_type,expense_type,is_tax_applicable,expense_date,rate_of_non_stock_and_taxable):
 		pi=frappe.new_doc('Purchase Invoice')
 		print('clearance_detail_row_idx',clearance_detail_row_idx)
 		pi.posting_date=expense_date
@@ -183,6 +185,7 @@ class PCClearance(Document):
 			pi_item.item_code=frappe.db.get_value('PC Expense Type',expense_type, 'default_non_stock_item')
 			pi_item.expense_account=self.get_default_expense_account(expense_type,self.company)
 			pi_item.qty=1
+			pi_item.rate=rate_of_non_stock_and_taxable
 			pi_item.cost_center=cost_center
 			pi_item.project=project			
 		if is_non_stock_expense_type==0 and is_tax_applicable==1:
@@ -275,7 +278,9 @@ class PCClearance(Document):
 					"debit_in_account_currency": clearance_item.amount_with_tax,
 					"cost_center": default_cost_center or '',
 					"party_type":"Supplier",
-					"party":clearance_item.supplier,				
+					"party":clearance_item.supplier,	
+					"reference_type":"Purchase Invoice",
+					"reference_name":clearance_item.pi_jv_reference								
 				})
 				# credit entry
 				accounts.append({
@@ -284,14 +289,13 @@ class PCClearance(Document):
 					"cost_center": default_cost_center or '',
 					"party_type":"Employee",
 					"party":self.employee,
-					"reference_type":"Purchase Invoice",
-					"reference_name":clearance_item.pi_jv_reference
+					# "reference_type":"Purchase Invoice",
+					# "reference_name":clearance_item.pi_jv_reference
 				})
 		
 		if len(accounts)>0:
 			print('clearance_detail_row_idx',clearance_detail_row_idx)
-			user_remark="It is a consolidated JE auto created on submit of PC Clearance {0}, Row # {1}".format
-			(self.name,",".join(clearance_detail_row_idx))
+			user_remark="It is a consolidated JE auto created on submit of PC Clearance {0}, Row # {1}".format(self.name,",".join(clearance_detail_row_idx))
 			
 			journal_entry = frappe.new_doc('Journal Entry')
 			journal_entry.voucher_type = 'Journal Entry'
