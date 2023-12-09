@@ -9,12 +9,20 @@ from frappe.utils import flt,nowdate,cint,cstr
 
 class PCClearance(Document):
 	def validate(self):
+		self.validate_no_stock_item_present_for_material()
+		self.check_amt_present_for_non_stock_taxable_items()
 		self.synch_clearance_details_and_stock_item_details()
 		self.calculate_amount_for_stock_expense_type()
 		self.calculate_amount_with_tax()
 		self.calculate_total_amount()
 		self.validate_allowed_expense_of_total_amount()
 	
+	def check_amt_present_for_non_stock_taxable_items(self):
+		for clearance_item in self.clearance_details:
+			print(clearance_item.is_tax_applicable, clearance_item.is_non_stock_expense_type, clearance_item.amount,'+'*10,cint(clearance_item.amount)==0.00)
+			if clearance_item.is_tax_applicable==1 and clearance_item.is_non_stock_expense_type==1 and clearance_item.amount==0:	
+				frappe.throw(_("No stock, taxable item should have amount value. Please correct Row id {0}".format(clearance_item.idx)))
+
 	def validate_no_stock_item_present_for_material(self):
 		# raise if no item for material
 		#  total in clearance
@@ -27,7 +35,7 @@ class PCClearance(Document):
 						stock_item_found=True
 						break
 				if stock_item_found==False:
-					frappe.throw(_("No stock item defined for expense {0} : Row id {1}".format(clearance_item.expense_type,clearance_item.idx)))
+					frappe.throw(_("No Purchase Invoice : stock item defined for expense {0} : Row id {1} <br> Please edit and Add Items for PI".format(clearance_item.expense_type,clearance_item.idx)))
 
 	def on_submit(self):
 		default_petty_cash_account=self.get_default_petty_cash_account()
