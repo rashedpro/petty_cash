@@ -5,7 +5,7 @@ import frappe
 from frappe import _
 from frappe.model.document import Document
 from erpnext.controllers.accounts_controller import get_default_taxes_and_charges
-from frappe.utils import flt,nowdate,cint
+from frappe.utils import flt,nowdate,cint,cstr
 
 class PCClearance(Document):
 	def validate(self):
@@ -30,10 +30,10 @@ class PCClearance(Document):
 					frappe.throw(_("No stock item defined for expense {0} : Row id {1}".format(clearance_item.expense_type,clearance_item.idx)))
 
 	def on_submit(self):
-		default_petty_cash_account=self.get_default_petty_cash_account
-		# self.create_je_for_non_taxable_and_non_stock_items(default_petty_cash_account)
+		default_petty_cash_account=self.get_default_petty_cash_account()
+		self.create_je_for_non_taxable_and_non_stock_items(default_petty_cash_account)
 		self.create_pi_for_taxable_items()
-		# self.clearance_journal_entry=self.create_consolidated_clearance_journal_entry(default_petty_cash_account)
+		self.clearance_journal_entry=self.create_consolidated_clearance_journal_entry(default_petty_cash_account)
 
 	def validate_allowed_expense_of_total_amount(self):
 		for clearance_item in self.clearance_details:
@@ -87,6 +87,8 @@ class PCClearance(Document):
 					amount_with_tax=clearance_item.amount+ (clearance_item.amount*taxes.get("taxes")[0].rate)/100
 					clearance_item.amount_with_tax=amount_with_tax
 					print(clearance_item.amount_with_tax,'clearance_item.amount_with_tax')
+				else:
+					frappe.throw(_("No default Purchase Taxes and Charges Template found for {0} company".format(self.company)))
 			else:
 				clearance_item.amount_with_tax=clearance_item.amount
 
@@ -235,9 +237,8 @@ class PCClearance(Document):
 			"party":self.employee
 		})
 		
-		user_remark="It is auto created on submit of PC Clearance {0}, Expense Type {1}, Row # {2}".format
-		(self.name,expense_type,clearance_detail_row_idx)
-		
+		user_remark="It is auto created on submit of PC Clearance {0}, Expense Type {1}, Row # {2}".format(self.name,expense_type,clearance_detail_row_idx)
+		print('user_remark',user_remark)
 		journal_entry = frappe.new_doc('Journal Entry')
 		journal_entry.voucher_type = 'Journal Entry'
 		journal_entry.company = self.company
@@ -260,12 +261,15 @@ class PCClearance(Document):
 			frappe.throw(_("Default Payable Account is not defined for {0} company".format(self.company)))
 		debit_account=default_payable_account
 		credit_account=default_petty_cash_account
+		print('debit_account',debit_account,'credit_account',credit_account)
 		accounts = []
 		clearance_detail_row_idx=[]
 		for clearance_item in self.clearance_details:
 			if clearance_item.is_tax_applicable==1 or (clearance_item.is_tax_applicable==0 and clearance_item.is_non_stock_expense_type==0):
-				clearance_detail_row_idx.append(clearance_item.idx)
+				clearance_detail_row_idx.append(cstr(clearance_item.idx))
 				# debit entry
+				print('clearance_item',clearance_item.name,clearance_item.idx,' clearance_item.amount_with_tax' ,clearance_item.amount_with_tax)
+				print("party",clearance_item.supplier,"party",self.employee,"daccount",debit_account,"caccount", credit_account)
 				accounts.append({
 					"account": debit_account,
 					"debit_in_account_currency": clearance_item.amount_with_tax,
@@ -285,6 +289,7 @@ class PCClearance(Document):
 				})
 		
 		if len(accounts)>0:
+			print('clearance_detail_row_idx',clearance_detail_row_idx)
 			user_remark="It is a consolidated JE auto created on submit of PC Clearance {0}, Row # {1}".format
 			(self.name,",".join(clearance_detail_row_idx))
 			
