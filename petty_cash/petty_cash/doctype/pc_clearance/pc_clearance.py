@@ -5,7 +5,7 @@ import frappe
 from frappe import _
 from frappe.model.document import Document
 from erpnext.controllers.accounts_controller import get_default_taxes_and_charges
-from frappe.utils import flt,nowdate,cint,cstr,get_link_to_form
+from frappe.utils import flt,nowdate,cint,cstr,get_link_to_form,add_days
 from petty_cash.petty_cash.doctype.pc_request.pc_request import get_balance_of_account_for_an_employee,fetch_petty_cash_account
 
 class PCClearance(Document):
@@ -176,7 +176,8 @@ class PCClearance(Document):
 		pi=frappe.new_doc('Purchase Invoice')
 		print('clearance_detail_row_idx',clearance_detail_row_idx)
 		pi.posting_date=expense_date
-		pi.due_date=expense_date
+		pi.due_date= add_days(expense_date, 1)
+		print(pi.posting_date,pi.due_date,'--'*10)
 		pi.supplier=supplier
 		pi.company=self.company
 		pi.bill_no=bill_no
