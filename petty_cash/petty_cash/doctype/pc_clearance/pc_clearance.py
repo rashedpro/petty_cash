@@ -23,7 +23,7 @@ class PCClearance(Document):
 		petty_cash_account=fetch_petty_cash_account(self.company)
 		if petty_cash_account==None:
 			frappe.throw(_("Petty cash account is not defined for {0}. Please check {1}".format(self.company,get_link_to_form("PC Settings", "PC Settings"))))		
-		self.previous_balance=flt(get_balance_of_account_for_an_employee(company=self.company,account=self.petty_cash_account,party=self.employee,to_date=self.date))
+		self.previous_balance=flt(get_balance_of_account_for_an_employee(company=self.company,account=petty_cash_account,party=self.employee,to_date=self.date))
 
 	def check_amt_present_for_non_stock_taxable_items(self):
 		for clearance_item in self.clearance_details:
@@ -125,7 +125,7 @@ class PCClearance(Document):
 		self.remaining_amount=self.total_expense-self.total_petty_cash
 
 	def get_default_petty_cash_account(self):
-		petty_cash_account_list=frappe.db.get_list('PC Petty Cash Account Detail', filters={'company': self.company},fields=['petty_cash_account'])		
+		petty_cash_account_list=frappe.db.get_all('PC Petty Cash Account Detail', filters={'company': self.company},fields=['petty_cash_account'])		
 		if len(petty_cash_account_list)>0:
 			default_petty_cash_account=petty_cash_account_list[0].get('petty_cash_account')
 			return default_petty_cash_account
@@ -134,7 +134,7 @@ class PCClearance(Document):
 
 
 	def get_default_zero_tax_template(self):
-		zero_tax_template_list=frappe.db.get_list('PC Purchase Taxes Template Detail', filters={'company': self.company},fields=['zero_tax_template'])		
+		zero_tax_template_list=frappe.db.get_all('PC Purchase Taxes Template Detail', filters={'company': self.company},fields=['zero_tax_template'])		
 		if len(zero_tax_template_list)>0:
 			default_zero_tax_template=zero_tax_template_list[0].get('zero_tax_template')
 			return default_zero_tax_template
