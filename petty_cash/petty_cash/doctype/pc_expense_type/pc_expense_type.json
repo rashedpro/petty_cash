@@ -88,7 +88,7 @@
  ],
  "icon": "fa fa-flag",
  "links": [],
- "modified": "2023-11-28 17:09:29.182367",
+ "modified": "2023-12-11 10:18:11.113162",
  "modified_by": "Administrator",
  "module": "Petty Cash",
  "name": "PC Expense Type",
@@ -108,6 +108,32 @@
   {
    "read": 1,
    "role": "Employee"
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts User",
+   "select": 1,
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts Manager",
+   "select": 1,
+   "share": 1,
+   "write": 1
   }
  ],
  "sort_field": "modified",

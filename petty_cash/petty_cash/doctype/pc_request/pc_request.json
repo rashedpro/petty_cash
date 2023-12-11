@@ -159,7 +159,7 @@
    "link_fieldname": "custom_pc_request_reference"
   }
  ],
- "modified": "2023-12-09 06:58:22.014972",
+ "modified": "2023-12-11 10:17:37.020718",
  "modified_by": "Administrator",
  "module": "Petty Cash",
  "name": "PC Request",
@@ -176,6 +176,34 @@
    "report": 1,
    "role": "System Manager",
    "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts User",
+   "select": 1,
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts Manager",
+   "select": 1,
+   "share": 1,
+   "submit": 1,
    "write": 1
   }
  ],
