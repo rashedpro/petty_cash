@@ -5,7 +5,8 @@ import frappe
 from frappe import _
 from frappe.model.document import Document
 from erpnext.controllers.accounts_controller import get_default_taxes_and_charges
-from frappe.utils import flt,nowdate,cint,cstr
+from frappe.utils import flt,nowdate,cint,cstr,get_link_to_form
+from petty_cash.petty_cash.doctype.pc_request.pc_request import get_balance_of_account_for_an_employee,fetch_petty_cash_account
 
 class PCClearance(Document):
 	def validate(self):
@@ -16,7 +17,14 @@ class PCClearance(Document):
 		self.calculate_amount_with_tax()
 		self.calculate_total_amount()
 		self.validate_allowed_expense_of_total_amount()
+		self.set_previous_balance()
 	
+	def set_previous_balance(self):
+		petty_cash_account=fetch_petty_cash_account(self.company)
+		if petty_cash_account==None:
+			frappe.throw(_("Petty cash account is not defined for {0}. Please check {1}".format(self.company,get_link_to_form("PC Settings", "PC Settings"))))		
+		self.previous_balance=flt(get_balance_of_account_for_an_employee(company=self.company,account=self.petty_cash_account,party=self.employee,to_date=self.date))
+
 	def check_amt_present_for_non_stock_taxable_items(self):
 		for clearance_item in self.clearance_details:
 			print(clearance_item.is_tax_applicable, clearance_item.is_non_stock_expense_type, clearance_item.amount,'+'*10,cint(clearance_item.amount)==0.00)
@@ -168,6 +176,7 @@ class PCClearance(Document):
 		pi=frappe.new_doc('Purchase Invoice')
 		print('clearance_detail_row_idx',clearance_detail_row_idx)
 		pi.posting_date=expense_date
+		pi.due_date=expense_date
 		pi.supplier=supplier
 		pi.company=self.company
 		pi.bill_no=bill_no
