@@ -49,8 +49,10 @@ class PCClearance(Document):
 		default_petty_cash_account=self.get_default_petty_cash_account()
 		self.create_je_for_non_taxable_and_non_stock_items(default_petty_cash_account)
 		self.create_pi_for_taxable_items()
+		self.reload()
 		clearance_journal_entry=self.create_consolidated_clearance_journal_entry(default_petty_cash_account)
 		frappe.db.set_value('PC Clearance', self.name, 'clearance_journal_entry', clearance_journal_entry)
+		self.reload()
 	# def on_submit(self):
 	# 	default_petty_cash_account=self.get_default_petty_cash_account()
 	# 	self.clearance_journal_entry=self.create_consolidated_clearance_journal_entry(default_petty_cash_account)
