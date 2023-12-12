@@ -206,7 +206,7 @@ class PCClearance(Document):
 			pi_item.rate=rate_of_non_stock_and_taxable
 			pi_item.cost_center=cost_center
 			pi_item.project=project			
-		if is_non_stock_expense_type==0 and is_tax_applicable==1:
+		if (is_non_stock_expense_type==0 and is_tax_applicable==1) or (is_non_stock_expense_type==1 and is_tax_applicable==1):
 			taxes = get_default_taxes_and_charges("Purchase Taxes and Charges Template",company=self.company)
 			if taxes.get("taxes_and_charges"):
 				pi.taxes_and_charges=taxes.get("taxes_and_charges")
