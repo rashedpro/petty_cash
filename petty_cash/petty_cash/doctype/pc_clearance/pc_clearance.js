@@ -2,15 +2,26 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on('PC Clearance', {
+	// onload: function(frm) {
+	// 	set_project(frm);
+	// },
 	// refresh: function(frm) {
 
 	// }
-	
+	// project : function(frm) {
+	// 	// set_project(frm);
+	// },
+	// clearance_details_on_form_rendered : function(frm) {
+	// 	set_project(frm);
+	// }
 
 });
 
 
 frappe.ui.form.on('PC Clearance Detail', {
+	expense_type: function(frm,cdt,cdn) {
+		set_project(frm,cdt,cdn);
+	},
 	project: function(frm,cdt,cdn) {
 		let row=locals[cdt][cdn]
 		if (row.project) {
@@ -32,6 +43,13 @@ frappe.ui.form.on('PC Clearance Detail', {
 				}
 			})
 		}
+			// if (row.project) {
+			// 	if(!frm.doc.project) {
+			// 		erpnext.utils.copy_value_in_all_rows(frm.doc, cdt, cdn, "clearance_details", "project");
+			// 	} else {
+			// 		set_project(frm);
+			// 	}
+			// }
 	},
 	before_clearance_details_remove: function(frm,cdt,cdn) {
 		let row=locals[cdt][cdn]
@@ -241,3 +259,34 @@ debugger
 		dialog.show();
 
 }	
+
+
+function set_project(frm,cdt,cdn) {
+	if(frm.doc.project){
+		
+		erpnext.utils.copy_value_in_all_rows(frm.doc, frm.doc.doctype, frm.doc.name, "clearance_details", "project");
+		
+	}
+	if (cdt) {
+		let row=locals[cdt][cdn]
+		if (row.project) {
+			frappe.db.get_value('Project', row.project, 'cost_center')
+			.then(r => {
+				if (r.message && r.message.cost_center) {
+					let cost_center=r.message.cost_center
+					frappe.model.set_value(cdt, cdn, 'cost_center', cost_center);
+					frm.refresh_field("clearance_details")
+				}else{
+					frappe.db.get_value('Company', company, 'cost_center')
+					.then(r => {
+						if (r.message && r.message.cost_center) {
+							let cost_center=r.message.cost_center
+							frappe.model.set_value(cdt, cdn, 'cost_center', cost_center);
+							frm.refresh_field("clearance_details")
+						}
+					})
+				}
+			})
+		}		
+	}
+}

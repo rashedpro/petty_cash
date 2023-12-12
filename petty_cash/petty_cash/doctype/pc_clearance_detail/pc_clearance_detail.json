@@ -70,8 +70,7 @@
    "label": "Amt",
    "mandatory_depends_on": "eval:doc.is_non_stock_expense_type==1",
    "options": "Company:company:default_currency",
-   "precision": "2",
-   "read_only_depends_on": "eval:doc.is_non_stock_expense_type==0"
+   "precision": "2"
   },
   {
    "columns": 1,
@@ -163,7 +162,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-12-12 07:12:32.820235",
+ "modified": "2023-12-12 15:34:39.793854",
  "modified_by": "Administrator",
  "module": "Petty Cash",
  "name": "PC Clearance Detail",
