@@ -37,7 +37,7 @@
    "reqd": 1
   },
   {
-   "columns": 2,
+   "columns": 1,
    "fieldname": "expense_date",
    "fieldtype": "Date",
    "in_list_view": 1,
@@ -117,6 +117,7 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Reference",
+   "no_copy": 1,
    "read_only": 1
   },
   {
@@ -162,7 +163,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-11-29 09:14:29.596110",
+ "modified": "2023-12-12 07:12:32.820235",
  "modified_by": "Administrator",
  "module": "Petty Cash",
  "name": "PC Clearance Detail",

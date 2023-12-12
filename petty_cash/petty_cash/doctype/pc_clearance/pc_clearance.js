@@ -60,11 +60,15 @@ frappe.ui.form.on('PC Clearance Detail', {
 			.then(r => {
 				console.log(r.message) // Open
 				let is_non_stock_expense_type=r.message.is_non_stock_expense_type
-				if (is_non_stock_expense_type==0) {
+				if (is_non_stock_expense_type==0 && frm.doc.docstatus==0) {
 					// frm.trigger("show_add_stock_item_dialog")
 					
 					show_add_stock_item_dialog(frm,row.name,row.idx,row.expense_type)
-				} else {
+				} else if(frm.doc.docstatus==1){
+					let msg=__("Cannot add to submitted document.")
+					frappe.show_alert(msg, 5);
+				}
+				else {
 					let msg=__("{0} is non stock item, so nothing to add.", [row.expense_type])
 					frappe.show_alert(msg, 5);
 					

@@ -4,7 +4,7 @@
 import frappe
 from frappe import _
 from frappe.model.document import Document
-from erpnext.controllers.accounts_controller import get_default_taxes_and_charges
+from erpnext.controllers.accounts_controller import get_default_taxes_and_charges,get_taxes_and_charges
 from frappe.utils import flt,nowdate,cint,cstr,get_link_to_form,add_days
 from petty_cash.petty_cash.doctype.pc_request.pc_request import get_balance_of_account_for_an_employee,fetch_petty_cash_account
 
@@ -49,7 +49,8 @@ class PCClearance(Document):
 		default_petty_cash_account=self.get_default_petty_cash_account()
 		self.create_je_for_non_taxable_and_non_stock_items(default_petty_cash_account)
 		self.create_pi_for_taxable_items()
-		self.clearance_journal_entry=self.create_consolidated_clearance_journal_entry(default_petty_cash_account)
+		clearance_journal_entry=self.create_consolidated_clearance_journal_entry(default_petty_cash_account)
+		frappe.db.set_value('PC Clearance', self.name, 'clearance_journal_entry', clearance_journal_entry)
 	# def on_submit(self):
 	# 	default_petty_cash_account=self.get_default_petty_cash_account()
 	# 	self.clearance_journal_entry=self.create_consolidated_clearance_journal_entry(default_petty_cash_account)
@@ -169,14 +170,17 @@ class PCClearance(Document):
 				is_tax_applicable=clearance_item.is_tax_applicable
 				expense_date=clearance_item.expense_date
 				rate_of_non_stock_and_taxable=clearance_item.amount
-				clearance_item.pi_jv_reference=self.create_purchase_invoice(supplier,bill_no,project,cost_center,clearance_detail_row_idx,is_non_stock_expense_type,expense_type,is_tax_applicable,expense_date,rate_of_non_stock_and_taxable)
+				pi_jv_reference=self.create_purchase_invoice(supplier,bill_no,project,cost_center,clearance_detail_row_idx,is_non_stock_expense_type,expense_type,is_tax_applicable,expense_date,rate_of_non_stock_and_taxable)
+				frappe.db.set_value('PC Clearance Detail', clearance_item.name, 'pi_jv_reference', pi_jv_reference)
 
 
 	def create_purchase_invoice(self,supplier,bill_no,project,cost_center,clearance_detail_row_idx,is_non_stock_expense_type,expense_type,is_tax_applicable,expense_date,rate_of_non_stock_and_taxable):
 		pi=frappe.new_doc('Purchase Invoice')
 		print('clearance_detail_row_idx',clearance_detail_row_idx)
+		pi.set_posting_time=1
 		pi.posting_date=expense_date
-		pi.due_date= add_days(expense_date, 1)
+		# pi.due_date= add_days(expense_date, 1)
+		pi.due_date= expense_date
 		print(pi.posting_date,pi.due_date,'--'*10)
 		pi.supplier=supplier
 		pi.company=self.company
@@ -197,6 +201,7 @@ class PCClearance(Document):
 					pi_item.cost_center=cost_center
 					pi_item.project=project
 					pi_item.warehouse=stock_item.warehouse
+					print('pi_item.rate',pi_item.rate,'is_non_stock_expense_type==0')
 		elif is_non_stock_expense_type==1:
 			pi.update_stock=0
 			pi_item=pi.append('items',{})
@@ -206,18 +211,35 @@ class PCClearance(Document):
 			pi_item.rate=rate_of_non_stock_and_taxable
 			pi_item.cost_center=cost_center
 			pi_item.project=project			
+			print('rate_of_non_stock_and_taxable',rate_of_non_stock_and_taxable)
+		print('is_non_stock_expense_type==0 and is_tax_applicable==1) or (is_non_stock_expense_type==1 and is_tax_applicable==1')
+		print(is_non_stock_expense_type , is_tax_applicable,is_non_stock_expense_type ,is_tax_applicable)
+		print(is_non_stock_expense_type==0 , is_tax_applicable==1,is_non_stock_expense_type==1 ,is_tax_applicable==1)
 		if (is_non_stock_expense_type==0 and is_tax_applicable==1) or (is_non_stock_expense_type==1 and is_tax_applicable==1):
 			taxes = get_default_taxes_and_charges("Purchase Taxes and Charges Template",company=self.company)
 			if taxes.get("taxes_and_charges"):
 				pi.taxes_and_charges=taxes.get("taxes_and_charges")
 		elif is_non_stock_expense_type==0 and is_tax_applicable==0:
 			pi.taxes_and_charges=self.get_default_zero_tax_template()
+		if pi.get("taxes_and_charges"):	
+			for tax in get_taxes_and_charges("Purchase Taxes and Charges Template", pi.get("taxes_and_charges")):
+				pi.append("taxes", tax)			
+		print('pi.taxes_and_charges',pi.taxes_and_charges)
 		pi.custom_pc_clearance_reference=self.name
 		pi.run_method("set_missing_values")
 		pi.run_method("calculate_taxes_and_totals")		
-		print(pi.as_dict())
+		# print(pi.as_dict())
+		print('pi.posting_date,pi.due_date')
+		print(pi.posting_date,pi.due_date,'at cle')
+		print('print(pi.grand_total,pi.outstanding_amount)')
+		print(pi.grand_total,pi.outstanding_amount)
 		pi.save(ignore_permissions = True)				
 		pi.submit()	
+		print('after ...print(pi.grand_total,pi.outstanding_amount)')
+		print(pi.grand_total,pi.outstanding_amount)	
+		print('taxes',pi.taxes,pi.taxes)
+		user_remark="It is auto created on submit of PC Clearance {0}, Expense Type {1}, Row # {2}".format(self.name,expense_type,clearance_detail_row_idx)
+		pi.add_comment('Comment', text=user_remark)
 		return pi.name					
 
 	def create_je_for_non_taxable_and_non_stock_items(self,default_petty_cash_account):
@@ -270,6 +292,7 @@ class PCClearance(Document):
 		journal_entry.custom_pc_clearance_reference=self.name
 		journal_entry.save(ignore_permissions = True)				
 		journal_entry.submit()	
+		journal_entry.add_comment('Comment', text=user_remark)
 		return journal_entry.name
 		# msg = _('Journal Entry {0} is created.'.format(frappe.bold(get_link_to_form('Journal Entry',journal_entry.name))))   
 		# frappe.msgprint(msg)	
@@ -325,6 +348,7 @@ class PCClearance(Document):
 			journal_entry.custom_pc_clearance_reference=self.name
 			journal_entry.save(ignore_permissions = True)				
 			journal_entry.submit()	
+			journal_entry.add_comment('Comment', text=user_remark)
 			return journal_entry.name
 		else:
 			return None
