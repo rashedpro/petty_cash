@@ -13,12 +13,26 @@ class PCClearance(Document):
 		self.validate_no_stock_item_present_for_material()
 		self.check_amt_present_for_non_stock_taxable_items()
 		self.synch_clearance_details_and_stock_item_details()
+		self.check_attachment_present_for_stock_items()
 		self.calculate_amount_for_stock_expense_type()
 		self.calculate_amount_with_tax()
 		self.calculate_total_amount()
 		self.validate_allowed_expense_of_total_amount()
 		self.set_previous_balance()
 	
+	def check_attachment_present_for_stock_items(self):
+		print(self.is_new(),'self.is_new()')
+		if not self.is_new():
+			old_doc = self.get_doc_before_save()
+			print('222',self.workflow_state , old_doc.workflow_state)
+			if ( old_doc.workflow_state and self.workflow_state and old_doc.workflow_state =='Pending' and self.workflow_state=='Waiting Finance Approval') :
+				for row_wk in self.clearance_details:
+					if row_wk.is_non_stock_expense_type==0 and not row_wk.attachment:
+						frappe.throw(
+							_("Row # : <b>{0}</b>  is stock item and hence attachment is required <br> Please provide attachment in order to transition to Waiting Finance Approval stage.").format(
+								row_wk.idx
+							)
+						) 		
 	def set_previous_balance(self):
 		petty_cash_account=fetch_petty_cash_account(self.company)
 		if petty_cash_account==None:
