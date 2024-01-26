@@ -14,6 +14,7 @@ class PCRequest(Document):
 		self.validate_repeating_expense_type()
 		self.sum_total_advance_amount()
 		self.set_petty_cash_account()
+		self.validate_allowed_expense_of_total_amount()
 		self.set_previous_balance()
 
 	def validate_repeating_expense_type(self):
@@ -37,6 +38,22 @@ class PCRequest(Document):
 
 	def set_previous_balance(self):
 		self.previous_balance=flt(get_balance_of_account_for_an_employee(company=self.company,account=self.petty_cash_account,party=self.employee,to_date=self.date))
+
+	def validate_allowed_expense_of_total_amount(self):
+		for expense_item in self.expense_details:
+			expense_type_to_check=expense_item.expense_type
+			allowed_percent_of_total_request=frappe.db.get_value('PC Expense Type', expense_type_to_check, 'allowed_percent_of_total_request')
+			max_allowed_request_amount=frappe.db.get_value('PC Expense Type', expense_type_to_check, 'max_allowed_request_amount')
+			if max_allowed_request_amount>0 and expense_item.advance_amount>max_allowed_request_amount:
+					frappe.throw(_("For expense type {0}, Max. Allowed Request Amount is {1} whereas actual is {2}."
+					.format(expense_item.expense_type,frappe.bold(max_allowed_request_amount),frappe.bold(expense_item.advance_amount))))						
+			if allowed_percent_of_total_request>0:
+				expense_type_to_check_actual_per=flt((expense_item.advance_amount/self.total_amount)*100,2)
+				if expense_type_to_check_actual_per>allowed_percent_of_total_request:
+					frappe.throw(_("For expense type {0}, allowed percentage of total request is {1} % whereas actual is {2} %."
+					.format(expense_item.expense_type,frappe.bold(allowed_percent_of_total_request),frappe.bold(expense_type_to_check_actual_per))))		
+
+
 
 @frappe.whitelist()
 def fetch_petty_cash_account(company):

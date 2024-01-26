@@ -11,6 +11,9 @@
  "field_order": [
   "expense_type",
   "is_non_stock_expense_type",
+  "request_limits_column",
+  "allowed_percent_of_total_request",
+  "max_allowed_request_amount",
   "column_break_myfto",
   "allowed_percent_of_total_clearance",
   "max_allowed_amt_wo_tax",
@@ -33,7 +36,8 @@
   },
   {
    "fieldname": "column_break_myfto",
-   "fieldtype": "Column Break"
+   "fieldtype": "Column Break",
+   "label": "<b>Clearance Limits</b>"
   },
   {
    "fieldname": "allowed_percent_of_total_clearance",
@@ -44,7 +48,7 @@
   {
    "fieldname": "max_allowed_amt_wo_tax",
    "fieldtype": "Currency",
-   "label": "Max. Allowed Amount Without Tax"
+   "label": "Max. Allowed Clearance Amount Without Tax"
   },
   {
    "description": "for taxable non-stock Item's Purchase Invoice[Expense Head]\nNote: for stock items, in PI default erpnext expense head gets used. ",
@@ -84,11 +88,26 @@
    "fieldname": "is_non_stock_expense_type",
    "fieldtype": "Check",
    "label": "Is Non-Stock Expense Type?"
+  },
+  {
+   "fieldname": "request_limits_column",
+   "fieldtype": "Column Break",
+   "label": "<b>Request Limits</b>"
+  },
+  {
+   "fieldname": "allowed_percent_of_total_request",
+   "fieldtype": "Percent",
+   "label": "% Allowed of Total Request"
+  },
+  {
+   "fieldname": "max_allowed_request_amount",
+   "fieldtype": "Currency",
+   "label": "Max. Allowed Request Amount"
   }
  ],
  "icon": "fa fa-flag",
  "links": [],
- "modified": "2023-12-11 10:18:11.113162",
+ "modified": "2024-01-26 09:30:23.013738",
  "modified_by": "Administrator",
  "module": "Petty Cash",
  "name": "PC Expense Type",
