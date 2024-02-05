@@ -14,6 +14,7 @@ class PCRequest(Document):
 		self.validate_repeating_expense_type()
 		self.sum_total_advance_amount()
 		self.set_petty_cash_account()
+		self.calculate_percentage_of_total()
 		self.validate_allowed_expense_of_total_amount()
 		self.set_previous_balance()
 
@@ -38,6 +39,11 @@ class PCRequest(Document):
 
 	def set_previous_balance(self):
 		self.previous_balance=flt(get_balance_of_account_for_an_employee(company=self.company,account=self.petty_cash_account,party=self.employee,to_date=self.date))
+
+
+	def calculate_percentage_of_total(self):
+		for expense_item in self.expense_details:
+			expense_item.actual_percentage_of_total_for_amt_advance_amount=flt((expense_item.advance_amount/self.total_amount)*100,2)
 
 	def validate_allowed_expense_of_total_amount(self):
 		for expense_item in self.expense_details:

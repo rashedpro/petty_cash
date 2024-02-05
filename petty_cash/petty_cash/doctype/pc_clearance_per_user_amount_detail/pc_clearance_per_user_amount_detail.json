@@ -1,0 +1,41 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-01-29 15:06:33.963994",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "user",
+  "allowed_amount_without_tax"
+ ],
+ "fields": [
+  {
+   "columns": 5,
+   "fieldname": "user",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "User",
+   "options": "User"
+  },
+  {
+   "columns": 5,
+   "fieldname": "allowed_amount_without_tax",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Allowed Amount Without Tax"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2024-01-29 15:08:45.205455",
+ "modified_by": "Administrator",
+ "module": "Petty Cash",
+ "name": "PC Clearance Per User Amount Detail",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

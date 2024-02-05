@@ -2,6 +2,31 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on('PC Clearance', {
+	onload_post_render: function(frm) {
+		let current_user=frappe.session.user
+		let owner=frm.doc.owner
+		debugger
+		if (frm.is_new()!=1 && current_user!= owner) {
+			let clearances=frm.doc.clearance_details
+			for (let index = 0; index < clearances.length; index++) {
+				let created_by_user=clearances[index].created_by_user
+				console.log('created_by_user,current_user,index')
+				console.log(created_by_user,'--',current_user,index)
+				if (created_by_user && created_by_user!=current_user) {
+					console.log('hide')
+					$("[data-fieldname='clearance_details']").find("[data-idx='"+clearances[index].idx+"']").hide()
+				}
+			}
+			let stock_item_details=frm.doc.stock_item_details
+			for (let index = 0; index < stock_item_details.length; index++) {
+				let stock_created_by_user = stock_item_details[index].created_by_user;
+				if (stock_created_by_user && stock_created_by_user!=current_user) {
+					console.log('hide')
+					$("[data-fieldname='stock_item_details']").find("[data-idx='"+stock_item_details[index].idx+"']").hide()
+				}			
+			}
+		}
+	}
 	// onload: function(frm) {
 	// 	set_project(frm);
 	// },
@@ -19,8 +44,15 @@ frappe.ui.form.on('PC Clearance', {
 
 
 frappe.ui.form.on('PC Clearance Detail', {
+	amount: function(frm,cdt,cdn) {
+		set_total_expense_without_taxes(frm)
+		check_per_user_amount_quota(frm)
+		set_allowed_expense_percent_of_total_amount(frm)
+	},
 	expense_type: function(frm,cdt,cdn) {
 		set_project(frm,cdt,cdn);
+		set_total_expense_without_taxes(frm)
+		
 	},
 	project: function(frm,cdt,cdn) {
 		let row=locals[cdt][cdn]
@@ -96,6 +128,56 @@ frappe.ui.form.on('PC Clearance Detail', {
 
 	}
 });
+
+
+function set_allowed_expense_percent_of_total_amount(frm) {
+	let clearances=frm.doc.clearance_details
+	for (let index = 0; index < clearances.length; index++) {
+		let clearance_row = clearances[index];
+		let current_expense_type=clearance_row.expense_type
+		let current_expense_type_total_amount=0
+		let current_expense_clearances=frm.doc.clearance_details
+		for (let index = 0; index < current_expense_clearances.length; index++) {
+			if (current_expense_clearances[index].expense_type==current_expense_type) {
+				current_expense_type_total_amount=current_expense_type_total_amount+current_expense_clearances[index].amount
+			} 
+		}
+		clearance_row.actual_percentage_of_total_for_amt_without_tax=flt((current_expense_type_total_amount/frm.doc.total_expense_without_tax)*100,2)
+	}
+	frm.refresh_field('clearance_details')
+}
+
+function check_per_user_amount_quota(frm) {
+	let current_user=frappe.session.user
+	let user_amount_details=frm.doc.user_amount_details
+	let current_user_in_user_amount_details=user_amount_details.find(cur=>cur.user==current_user)
+	let current_user_allowed_amount
+	if (current_user_in_user_amount_details) {
+		current_user_allowed_amount=current_user_in_user_amount_details.allowed_amount_without_tax
+	}
+
+	let clearances=frm.doc.clearance_details
+	let current_user_total_entered_amount=clearances.reduce(current_user_total_fn,0)
+	function current_user_total_fn(accumulator,current) {
+		if (current.created_by_user==current_user){
+			return flt(accumulator)+flt(current.amount)
+		}
+	}	
+	console.log('current_user,current_user_allowed_amount,current_user_total_entered_amount')
+	// console.log(current_user,current_user_allowed_amount,current_user_total_entered_amount)
+	if (current_user_allowed_amount!=undefined && current_user_total_entered_amount>current_user_allowed_amount) {
+		frappe.throw(__('User {0} : Allowed amount is {1}. You have entered {2}.',[current_user,current_user_allowed_amount,current_user_total_entered_amount]))
+	}
+}
+
+function set_total_expense_without_taxes(frm) {
+	let clearances=frm.doc.clearance_details
+	let total_expense_without_tax= clearances.reduce(add,0);
+	function add(accumulator,current) {
+		return accumulator+current.amount
+	}
+	frm.set_value('total_expense_without_tax',total_expense_without_tax)
+}
 
 function remove_rows_from_stock_item_dialog(frm,clearance_detail_row_idx){
 	debugger

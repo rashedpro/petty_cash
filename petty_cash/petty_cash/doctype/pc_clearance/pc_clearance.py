@@ -10,6 +10,7 @@ from petty_cash.petty_cash.doctype.pc_request.pc_request import get_balance_of_a
 
 class PCClearance(Document):
 	def validate(self):
+		self.validate_duplicate_user_in_user_amount_details()
 		self.validate_no_stock_item_present_for_material()
 		self.check_amt_present_for_non_stock_taxable_items()
 		self.synch_clearance_details_and_stock_item_details()
@@ -17,9 +18,31 @@ class PCClearance(Document):
 		self.calculate_amount_for_stock_expense_type()
 		self.calculate_amount_with_tax()
 		self.calculate_total_amount()
+		self.validate_per_user_amount_quota
+		# self.calculate_percentage_of_total()
 		self.validate_allowed_expense_of_total_amount()
 		self.set_previous_balance()
 	
+	def validate_per_user_amount_quota(self):
+		for user_row in self.user_amount_details:
+			current_user=user_row.user
+			current_user_allowed_amount=user_row.allowed_amount_without_tax
+			current_user_total_entered_amount=0
+			for clearance_row in self.clearance_details:
+				if clearance_row.created_by_user==current_user:
+					current_user_total_entered_amount=current_user_total_entered_amount+clearance_row.amount
+			if current_user_total_entered_amount>0 and current_user_total_entered_amount>current_user_allowed_amount:
+				frappe.throw(_("User {0} : Allowed amount is {1}. User has entered {2}".format(current_user,current_user_allowed_amount,current_user_total_entered_amount)))
+
+	def validate_duplicate_user_in_user_amount_details(self):
+		"""Error when Same Company is entered multiple times in accounts"""
+		user_list = []
+		for row in self.user_amount_details:
+			user_list.append(row.user)
+
+		if len(user_list) != len(set(user_list)):
+			frappe.throw(_("Same User is entered more than once in User Amount Details child table."))
+
 	def check_attachment_present_for_stock_items(self):
 		print(self.is_new(),'self.is_new()')
 		if not self.is_new():
@@ -71,21 +94,28 @@ class PCClearance(Document):
 	# 	default_petty_cash_account=self.get_default_petty_cash_account()
 	# 	self.clearance_journal_entry=self.create_consolidated_clearance_journal_entry(default_petty_cash_account)
 
+	# todo : check if duplicate expense is allowed
+	def calculate_percentage_of_total(self):
+		for clearance_item in self.clearance_details:
+			clearance_item.actual_percentage_of_total_for_amt_without_tax=flt((clearance_item.amount/self.total_expense_without_tax)*100,2)
+
 	def validate_allowed_expense_of_total_amount(self):
 		for clearance_item in self.clearance_details:
 			expense_type_to_check=clearance_item.expense_type
 			expense_type_to_check_total_amount=0
-			allowed_percent_of_total_clearance=frappe.db.get_value('PC Expense Type', expense_type_to_check, 'allowed_percent_of_total_clearance')
-			max_allowed_amt_wo_tax=frappe.db.get_value('PC Expense Type', expense_type_to_check, 'max_allowed_amt_wo_tax')
-			if allowed_percent_of_total_clearance>0:
-				for clearance_item_to_check in self.clearance_details:
-					if expense_type_to_check==clearance_item_to_check.expense_type:
-						expense_type_to_check_total_amount=expense_type_to_check_total_amount+clearance_item_to_check.amount
-				if max_allowed_amt_wo_tax>0 and expense_type_to_check_total_amount>max_allowed_amt_wo_tax:
-					frappe.throw(_("For expense type {0}, Max. Allowed Amount Without Tax is {1} whereas actual is {2}.".format(clearance_item.expense_type,frappe.bold(max_allowed_amt_wo_tax),frappe.bold(expense_type_to_check_total_amount))))						
-				expense_type_to_check_actual_per=flt((expense_type_to_check_total_amount/self.total_expense_without_tax)*100,2)
-				if expense_type_to_check_actual_per>allowed_percent_of_total_clearance:
-					frappe.throw(_("For expense type {0}, allowed percentage of total without tax is {1} % whereas actual is {2} %.".format(clearance_item.expense_type,frappe.bold(allowed_percent_of_total_clearance),frappe.bold(expense_type_to_check_actual_per))))		
+			allowed_percent_of_total_clearance=frappe.db.get_value('PC Expense Type', expense_type_to_check, 'allowed_percent_of_total_clearance') or 0
+			max_allowed_amt_wo_tax=frappe.db.get_value('PC Expense Type', expense_type_to_check, 'max_allowed_amt_wo_tax')  or 0
+			for clearance_item_to_check in self.clearance_details:
+				if expense_type_to_check==clearance_item_to_check.expense_type:
+					expense_type_to_check_total_amount=expense_type_to_check_total_amount+clearance_item_to_check.amount
+			if max_allowed_amt_wo_tax>0 and expense_type_to_check_total_amount>max_allowed_amt_wo_tax:
+				frappe.throw(_("For expense type {0}, Max. Allowed Amount Without Tax is {1} whereas actual is {2}.".format(clearance_item.expense_type,frappe.bold(max_allowed_amt_wo_tax),frappe.bold(expense_type_to_check_total_amount))))						
+			expense_type_to_check_actual_per=flt((expense_type_to_check_total_amount/self.total_expense_without_tax)*100,2)
+			# clearance_item.db_set('actual_percentage_of_total_for_amt_without_tax',expense_type_to_check_actual_per,commit=True)
+			clearance_item.actual_percentage_of_total_for_amt_without_tax=expense_type_to_check_actual_per
+			# frappe.db.set_value('PC Clearance Detail', clearance_item.name, 'actual_percentage_of_total_for_amt_without_tax', expense_type_to_check_actual_per, update_modified=False)
+			if allowed_percent_of_total_clearance>0 and expense_type_to_check_actual_per>allowed_percent_of_total_clearance:
+				frappe.throw(_("For expense type {0}, allowed percentage of total without tax is {1} % whereas actual is {2} %.".format(clearance_item.expense_type,frappe.bold(allowed_percent_of_total_clearance),frappe.bold(expense_type_to_check_actual_per))))		
 
 
 

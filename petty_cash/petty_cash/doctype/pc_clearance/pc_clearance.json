@@ -16,6 +16,8 @@
   "previous_balance",
   "clearance_date",
   "clearance_journal_entry",
+  "section_break_uueuz",
+  "user_amount_details",
   "section_break_fbpbc",
   "clearance_details",
   "stock_item_details",
@@ -149,6 +151,16 @@
    "fieldname": "clearance_date",
    "fieldtype": "Date",
    "label": "JE Clearance Date"
+  },
+  {
+   "fieldname": "section_break_uueuz",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "user_amount_details",
+   "fieldtype": "Table",
+   "label": "User Amount Details",
+   "options": "PC Clearance Per User Amount Detail"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -163,7 +175,7 @@
    "link_fieldname": "custom_pc_clearance_reference"
   }
  ],
- "modified": "2023-12-12 07:06:34.487911",
+ "modified": "2024-01-29 15:10:33.280761",
  "modified_by": "Administrator",
  "module": "Petty Cash",
  "name": "PC Clearance",

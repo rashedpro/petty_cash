@@ -21,6 +21,12 @@ frappe.ui.form.on('PC Request', {
 	}		
 });
 
+frappe.ui.form.on('PC Request Expense Detail', {
+	advance_amount:function (frm,cdt,cdn) {
+		set_actual_percentage_for_all_rows(frm)
+	}
+})
+
 function set_petty_cash_account(frm) {
 	if(frm.doc.company) {
 		frappe.call({
@@ -86,4 +92,17 @@ function make_payment_entry(frm) {
 
 		})
 
+}
+
+function set_actual_percentage_for_all_rows(frm) {
+	let expenses=frm.doc.expense_details
+	let total_expenses= expenses.reduce(add,0);
+	function add(accumulator,current) {
+		return accumulator+current.advance_amount
+	}
+	for (let index = 0; index < expenses.length; index++) {
+		expenses[index].actual_percentage_of_total_for_amt_advance_amount=flt((expenses[index].advance_amount/total_expenses)*100,2)
+	}
+	frm.set_value('total_amount',total_expenses)
+	frm.refresh_field('expense_details')
 }

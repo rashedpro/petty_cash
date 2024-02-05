@@ -12,7 +12,8 @@
   "qty",
   "rate",
   "warehouse",
-  "total"
+  "total",
+  "created_by_user"
  ],
  "fields": [
   {
@@ -69,12 +70,19 @@
    "in_list_view": 1,
    "label": "Clr No",
    "read_only": 1
+  },
+  {
+   "default": "__user",
+   "fieldname": "created_by_user",
+   "fieldtype": "Link",
+   "label": "Created By User",
+   "options": "User"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-11-27 15:25:43.623723",
+ "modified": "2024-02-05 09:58:14.593443",
  "modified_by": "Administrator",
  "module": "Petty Cash",
  "name": "PC Stock Item Expense Detail",

@@ -8,10 +8,12 @@
  "engine": "InnoDB",
  "field_order": [
   "expense_type",
-  "advance_amount"
+  "advance_amount",
+  "actual_percentage_of_total_for_amt_advance_amount"
  ],
  "fields": [
   {
+   "columns": 5,
    "fieldname": "expense_type",
    "fieldtype": "Link",
    "in_list_view": 1,
@@ -19,17 +21,26 @@
    "options": "PC Expense Type"
   },
   {
+   "columns": 3,
    "fieldname": "advance_amount",
    "fieldtype": "Currency",
    "in_list_view": 1,
    "label": "Advance Amount",
    "options": "Company:company:default_currency"
+  },
+  {
+   "columns": 2,
+   "fieldname": "actual_percentage_of_total_for_amt_advance_amount",
+   "fieldtype": "Percent",
+   "in_list_view": 1,
+   "label": "% of Total",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-11-23 10:34:30.382759",
+ "modified": "2024-02-03 12:32:39.015001",
  "modified_by": "Administrator",
  "module": "Petty Cash",
  "name": "PC Request Expense Detail",

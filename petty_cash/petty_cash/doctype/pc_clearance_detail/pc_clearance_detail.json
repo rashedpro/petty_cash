@@ -19,10 +19,12 @@
   "attachment",
   "section_break_dxtxs",
   "amount",
+  "actual_percentage_of_total_for_amt_without_tax",
   "amount_with_tax",
   "column_break_26kba",
   "bill_no",
   "pi_jv_reference",
+  "created_by_user",
   "section_break_nrqj4",
   "add_item"
  ],
@@ -157,12 +159,25 @@
   {
    "fieldname": "section_break_nrqj4",
    "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "actual_percentage_of_total_for_amt_without_tax",
+   "fieldtype": "Percent",
+   "label": "Actual % of Total",
+   "read_only": 1
+  },
+  {
+   "default": "__user",
+   "fieldname": "created_by_user",
+   "fieldtype": "Link",
+   "label": "Created By User",
+   "options": "User"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-12-12 15:34:39.793854",
+ "modified": "2024-02-05 09:36:29.253864",
  "modified_by": "Administrator",
  "module": "Petty Cash",
  "name": "PC Clearance Detail",
