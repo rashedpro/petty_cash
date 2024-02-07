@@ -19,7 +19,6 @@ class PCClearance(Document):
 		self.calculate_amount_with_tax()
 		self.calculate_total_amount()
 		self.validate_per_user_amount_quota
-		# self.calculate_percentage_of_total()
 		self.validate_allowed_expense_of_total_amount()
 		self.set_previous_balance()
 	
@@ -90,14 +89,7 @@ class PCClearance(Document):
 		clearance_journal_entry=self.create_consolidated_clearance_journal_entry(default_petty_cash_account)
 		frappe.db.set_value('PC Clearance', self.name, 'clearance_journal_entry', clearance_journal_entry)
 		self.reload()
-	# def on_submit(self):
-	# 	default_petty_cash_account=self.get_default_petty_cash_account()
-	# 	self.clearance_journal_entry=self.create_consolidated_clearance_journal_entry(default_petty_cash_account)
 
-	# todo : check if duplicate expense is allowed
-	def calculate_percentage_of_total(self):
-		for clearance_item in self.clearance_details:
-			clearance_item.actual_percentage_of_total_for_amt_without_tax=flt((clearance_item.amount/self.total_expense_without_tax)*100,2)
 
 	def validate_allowed_expense_of_total_amount(self):
 		for clearance_item in self.clearance_details:
@@ -110,10 +102,9 @@ class PCClearance(Document):
 					expense_type_to_check_total_amount=expense_type_to_check_total_amount+clearance_item_to_check.amount
 			if max_allowed_amt_wo_tax>0 and expense_type_to_check_total_amount>max_allowed_amt_wo_tax:
 				frappe.throw(_("For expense type {0}, Max. Allowed Amount Without Tax is {1} whereas actual is {2}.".format(clearance_item.expense_type,frappe.bold(max_allowed_amt_wo_tax),frappe.bold(expense_type_to_check_total_amount))))						
+			
 			expense_type_to_check_actual_per=flt((expense_type_to_check_total_amount/self.total_expense_without_tax)*100,2)
-			# clearance_item.db_set('actual_percentage_of_total_for_amt_without_tax',expense_type_to_check_actual_per,commit=True)
 			clearance_item.actual_percentage_of_total_for_amt_without_tax=expense_type_to_check_actual_per
-			# frappe.db.set_value('PC Clearance Detail', clearance_item.name, 'actual_percentage_of_total_for_amt_without_tax', expense_type_to_check_actual_per, update_modified=False)
 			if allowed_percent_of_total_clearance>0 and expense_type_to_check_actual_per>allowed_percent_of_total_clearance:
 				frappe.throw(_("For expense type {0}, allowed percentage of total without tax is {1} % whereas actual is {2} %.".format(clearance_item.expense_type,frappe.bold(allowed_percent_of_total_clearance),frappe.bold(expense_type_to_check_actual_per))))		
 

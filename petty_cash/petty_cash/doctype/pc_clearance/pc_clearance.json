@@ -21,7 +21,7 @@
   "section_break_fbpbc",
   "clearance_details",
   "stock_item_details",
-  "section_break_xrcfr",
+  "pc_clearance_total_section",
   "total_expense_without_tax",
   "column_break_tngfv",
   "total_expense",
@@ -95,10 +95,6 @@
    "read_only": 1
   },
   {
-   "fieldname": "section_break_xrcfr",
-   "fieldtype": "Section Break"
-  },
-  {
    "fieldname": "column_break_tngfv",
    "fieldtype": "Column Break"
   },
@@ -161,6 +157,10 @@
    "fieldtype": "Table",
    "label": "User Amount Details",
    "options": "PC Clearance Per User Amount Detail"
+  },
+  {
+   "fieldname": "pc_clearance_total_section",
+   "fieldtype": "Section Break"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -175,7 +175,7 @@
    "link_fieldname": "custom_pc_clearance_reference"
   }
  ],
- "modified": "2024-01-29 15:10:33.280761",
+ "modified": "2024-02-07 07:31:00.121387",
  "modified_by": "Administrator",
  "module": "Petty Cash",
  "name": "PC Clearance",
