@@ -20,6 +20,7 @@
   "payment_status",
   "actual_paid_amount",
   "column_break_jjpaj",
+  "maximum_balance_for_petty_cash_cf",
   "previous_balance",
   "total_amount",
   "section_break_piubs",
@@ -149,6 +150,14 @@
   {
    "fieldname": "column_break_jjpaj",
    "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "employee.maximum_balance_for_petty_cash_cf",
+   "fieldname": "maximum_balance_for_petty_cash_cf",
+   "fieldtype": "Currency",
+   "label": "Max Balance For Petty Cash",
+   "options": "Company:company:default_currency",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
@@ -159,7 +168,7 @@
    "link_fieldname": "custom_pc_request_reference"
   }
  ],
- "modified": "2023-12-11 10:17:37.020718",
+ "modified": "2024-02-12 14:31:55.924576",
  "modified_by": "Administrator",
  "module": "Petty Cash",
  "name": "PC Request",

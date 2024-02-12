@@ -149,20 +149,32 @@ function check_per_user_amount_quota(frm) {
 	let current_user_in_user_amount_details=user_amount_details.find(cur=>cur.user==current_user)
 	let current_user_allowed_amount
 	if (current_user_in_user_amount_details) {
-		current_user_allowed_amount=current_user_in_user_amount_details.allowed_amount_without_tax
+		current_user_allowed_amount=current_user_in_user_amount_details.allowed_amount_with_tax
 	}
 
 	let clearances=frm.doc.clearance_details
 	let current_user_total_entered_amount=clearances.reduce(current_user_total_fn,0)
 	function current_user_total_fn(accumulator,current) {
 		if (current.created_by_user==current_user){
-			return flt(accumulator)+flt(current.amount)
+			return flt(accumulator)+flt(current.amount_with_tax)
 		}
 	}	
 	console.log('current_user,current_user_allowed_amount,current_user_total_entered_amount')
-	// console.log(current_user,current_user_allowed_amount,current_user_total_entered_amount)
+	
+	if (current_user_total_entered_amount) {
+		let user_amount_details=frm.doc.user_amount_details
+		for (let index = 0; index < user_amount_details.length; index++) {
+			let amt_detail_for_user = user_amount_details[index].user;
+			if (amt_detail_for_user && amt_detail_for_user==current_user) {
+				frappe.model.set_value(user_amount_details[index].cdt, user_amount_details[index].cdn, 'consumed_amount', current_user_total_entered_amount);
+				let remaining_amount=user_amount_details[index].allowed_amount_with_tax-current_user_total_entered_amount
+				frappe.model.set_value(user_amount_details[index].cdt, user_amount_details[index].cdn, 'remaining_amount', remaining_amount);								
+			}			
+		}	
+		frm.refresh_field("user_amount_details")	
+	}
 	if (current_user_allowed_amount!=undefined && current_user_total_entered_amount>current_user_allowed_amount) {
-		frappe.throw(__('User {0} : Allowed amount is {1}. You have entered {2}.',[current_user,current_user_allowed_amount,current_user_total_entered_amount]))
+		frappe.show_alert(__('User {0} : Allowed amount is {1}. You have entered {2}.',[current_user,current_user_allowed_amount,current_user_total_entered_amount]),5)
 	}
 }
 

@@ -17,6 +17,13 @@ class PCRequest(Document):
 		self.calculate_percentage_of_total()
 		self.validate_allowed_expense_of_total_amount()
 		self.set_previous_balance()
+		self.check_against_maximum_balance_for_petty_cash_cf_in_employee()
+
+	def check_against_maximum_balance_for_petty_cash_cf_in_employee(self):
+		self.maximum_balance_for_petty_cash_cf=frappe.db.get_value('Employee', self.employee, 'maximum_balance_for_petty_cash_cf')
+		to_check_amt=flt(self.previous_balance+self.total_amount)
+		if self.maximum_balance_for_petty_cash_cf and self.maximum_balance_for_petty_cash_cf>0 and to_check_amt>self.maximum_balance_for_petty_cash_cf:
+			frappe.throw(_("Your balance has exceeded by {0}".format(to_check_amt-self.maximum_balance_for_petty_cash_cf)))
 
 	def validate_repeating_expense_type(self):
 		"""Error when Same Company is entered multiple times in accounts"""

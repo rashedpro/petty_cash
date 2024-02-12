@@ -7,6 +7,7 @@ from frappe.model.document import Document
 from erpnext.controllers.accounts_controller import get_default_taxes_and_charges,get_taxes_and_charges
 from frappe.utils import flt,nowdate,cint,cstr,get_link_to_form,add_days
 from petty_cash.petty_cash.doctype.pc_request.pc_request import get_balance_of_account_for_an_employee,fetch_petty_cash_account
+from frappe.share import add
 
 class PCClearance(Document):
 	def validate(self):
@@ -18,20 +19,37 @@ class PCClearance(Document):
 		self.calculate_amount_for_stock_expense_type()
 		self.calculate_amount_with_tax()
 		self.calculate_total_amount()
-		self.validate_per_user_amount_quota
+		self.validate_per_user_amount_quota()
 		self.validate_allowed_expense_of_total_amount()
 		self.set_previous_balance()
+		self.share_pc_clearance_with_user()
 	
+	def share_pc_clearance_with_user(self):
+		if self.owner==frappe.session.user:
+			for user_row in self.user_amount_details:
+				user_to_share=user_row.user
+				old_doc = self.get_doc_before_save()
+				if user_to_share and self.owner!=user_to_share and old_doc.shared_with_user==0:
+					shared_with_user=add(self.doctype, self.name, user=user_to_share, read=1, write=1, submit=0, share=0, everyone=0, notify=1)
+					user_row.shared_with_user=1
+					if shared_with_user:
+						frappe.msgprint(
+							_("PC Clearnace {0} is shared with {1} user").format(self.name,user_to_share),
+							alert=1,
+						)			
+
 	def validate_per_user_amount_quota(self):
 		for user_row in self.user_amount_details:
 			current_user=user_row.user
-			current_user_allowed_amount=user_row.allowed_amount_without_tax
+			current_user_allowed_amount=user_row.allowed_amount_with_tax
 			current_user_total_entered_amount=0
 			for clearance_row in self.clearance_details:
 				if clearance_row.created_by_user==current_user:
-					current_user_total_entered_amount=current_user_total_entered_amount+clearance_row.amount
+					current_user_total_entered_amount=current_user_total_entered_amount+clearance_row.amount_with_tax
+			user_row.consumed_amount=current_user_total_entered_amount
+			user_row.remaining_amount=user_row.allowed_amount_with_tax-user_row.consumed_amount
 			if current_user_total_entered_amount>0 and current_user_total_entered_amount>current_user_allowed_amount:
-				frappe.throw(_("User {0} : Allowed amount is {1}. User has entered {2}".format(current_user,current_user_allowed_amount,current_user_total_entered_amount)))
+				frappe.msgprint(_("User {0} : Allowed amount is {1}. User has entered {2}".format(current_user,current_user_allowed_amount,current_user_total_entered_amount)))
 
 	def validate_duplicate_user_in_user_amount_details(self):
 		"""Error when Same Company is entered multiple times in accounts"""
