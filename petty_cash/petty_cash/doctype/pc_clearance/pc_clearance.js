@@ -2,45 +2,11 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on('PC Clearance', {
+	refresh: function(frm) {
+		hide_all_fields_rows_for_non_creator(frm)
+	},	
 	onload_post_render: function(frm) {
-		let current_user=frappe.session.user
-		let owner=frm.doc.owner
-		if (frm.is_new()!=1 && current_user!= owner) {
-			
-			let user_amount_details=frm.doc.user_amount_details
-			for (let index = 0; index < user_amount_details.length; index++) {
-				let amt_detail_for_user = user_amount_details[index].user;
-				if (amt_detail_for_user && amt_detail_for_user!=current_user) {
-					console.log('hide')
-					$("[data-fieldname='user_amount_details']").find("[data-idx='"+user_amount_details[index].idx+"']").hide()
-				}			
-			}
-
-			let clearances=frm.doc.clearance_details
-			for (let index = 0; index < clearances.length; index++) {
-				let created_by_user=clearances[index].created_by_user
-				console.log('created_by_user,current_user,index')
-				console.log(created_by_user,'--',current_user,index)
-				if (created_by_user && created_by_user!=current_user) {
-					console.log('hide')
-					$("[data-fieldname='clearance_details']").find("[data-idx='"+clearances[index].idx+"']").hide()
-				}
-			}
-			let stock_item_details=frm.doc.stock_item_details
-			for (let index = 0; index < stock_item_details.length; index++) {
-				let stock_created_by_user = stock_item_details[index].created_by_user;
-				if (stock_created_by_user && stock_created_by_user!=current_user) {
-					console.log('hide')
-					$("[data-fieldname='stock_item_details']").find("[data-idx='"+stock_item_details[index].idx+"']").hide()
-				}			
-			}
-
-			// hide total section fields
-			$('div[data-fieldname="total_expense_without_tax"]').addClass('hide-control')
-			$('div[data-fieldname="total_expense"]').addClass('hide-control')
-			$('div[data-fieldname="total_petty_cash"]').addClass('hide-control')
-			$('div[data-fieldname="remaining_amount"]').addClass('hide-control')
-		}
+		hide_all_fields_rows_for_non_creator(frm)
 	}
 });
 
@@ -378,5 +344,46 @@ function set_project(frm,cdt,cdn) {
 				}
 			})
 		}		
+	}
+}
+
+function hide_all_fields_rows_for_non_creator(frm){
+	let current_user=frappe.session.user
+	let owner=frm.doc.owner
+	if (frm.is_new()!=1 && current_user!= owner) {
+		
+		let user_amount_details=frm.doc.user_amount_details
+		for (let index = 0; index < user_amount_details.length; index++) {
+			let amt_detail_for_user = user_amount_details[index].user;
+			if (amt_detail_for_user && amt_detail_for_user!=current_user) {
+				console.log('hide')
+				$("[data-fieldname='user_amount_details']").find("[data-idx='"+user_amount_details[index].idx+"']").hide()
+			}			
+		}
+
+		let clearances=frm.doc.clearance_details
+		for (let index = 0; index < clearances.length; index++) {
+			let created_by_user=clearances[index].created_by_user
+			console.log('created_by_user,current_user,index')
+			console.log(created_by_user,'--',current_user,index)
+			if (created_by_user && created_by_user!=current_user) {
+				console.log('hide')
+				$("[data-fieldname='clearance_details']").find("[data-idx='"+clearances[index].idx+"']").hide()
+			}
+		}
+		let stock_item_details=frm.doc.stock_item_details
+		for (let index = 0; index < stock_item_details.length; index++) {
+			let stock_created_by_user = stock_item_details[index].created_by_user;
+			if (stock_created_by_user && stock_created_by_user!=current_user) {
+				console.log('hide')
+				$("[data-fieldname='stock_item_details']").find("[data-idx='"+stock_item_details[index].idx+"']").hide()
+			}			
+		}
+
+		// hide total section fields
+		$('div[data-fieldname="total_expense_without_tax"]').addClass('hide-control')
+		$('div[data-fieldname="total_expense"]').addClass('hide-control')
+		$('div[data-fieldname="total_petty_cash"]').addClass('hide-control')
+		$('div[data-fieldname="remaining_amount"]').addClass('hide-control')
 	}
 }
