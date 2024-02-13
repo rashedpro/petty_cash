@@ -150,7 +150,7 @@ function set_total_expense_without_taxes(frm) {
 	function add(accumulator,current) {
 		return accumulator+current.amount
 	}
-	frm.set_value('total_expense_without_tax',total_expense_without_tax).then(hide_fields('total_expense_without_tax'))
+	frm.set_value('total_expense_without_tax',total_expense_without_tax).then(hide_fields(frm,'total_expense_without_tax'))
 	
 }
 
@@ -348,7 +348,7 @@ function set_project(frm,cdt,cdn) {
 	}
 }
 
-function hide_fields(fieldname) {
+function hide_fields(frm,fieldname) {
 	let current_user=frappe.session.user
 	let owner=frm.doc.owner
 	if (frm.is_new()!=1 && current_user!= owner) {
