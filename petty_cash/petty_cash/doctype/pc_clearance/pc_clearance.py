@@ -48,8 +48,8 @@ class PCClearance(Document):
 			for clearance_row in self.clearance_details:
 				if clearance_row.created_by_user==current_user:
 					current_user_total_entered_amount=current_user_total_entered_amount+clearance_row.amount_with_tax
-			user_row.consumed_amount=current_user_total_entered_amount
-			user_row.remaining_amount=user_row.allowed_amount_with_tax-user_row.consumed_amount
+			user_row.consumed_amount_with_tax=current_user_total_entered_amount
+			user_row.remaining_amount_with_tax=user_row.allowed_amount_with_tax-user_row.consumed_amount_with_tax
 			if current_user_total_entered_amount>0 and current_user_total_entered_amount>current_user_allowed_amount:
 				frappe.msgprint(_("User {0} : Allowed amount is {1}. User has entered {2}".format(current_user,current_user_allowed_amount,current_user_total_entered_amount)))
 

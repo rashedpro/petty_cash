@@ -166,9 +166,9 @@ function check_per_user_amount_quota(frm) {
 		for (let index = 0; index < user_amount_details.length; index++) {
 			let amt_detail_for_user = user_amount_details[index].user;
 			if (amt_detail_for_user && amt_detail_for_user==current_user) {
-				frappe.model.set_value(user_amount_details[index].cdt, user_amount_details[index].cdn, 'consumed_amount', current_user_total_entered_amount);
-				let remaining_amount=user_amount_details[index].allowed_amount_with_tax-current_user_total_entered_amount
-				frappe.model.set_value(user_amount_details[index].cdt, user_amount_details[index].cdn, 'remaining_amount', remaining_amount);								
+				frappe.model.set_value(user_amount_details[index].cdt, user_amount_details[index].cdn, 'consumed_amount_with_tax', current_user_total_entered_amount);
+				let remaining_amount_with_tax=user_amount_details[index].allowed_amount_with_tax-current_user_total_entered_amount
+				frappe.model.set_value(user_amount_details[index].cdt, user_amount_details[index].cdn, 'remaining_amount_with_tax', remaining_amount_with_tax);								
 			}			
 		}	
 		frm.refresh_field("user_amount_details")	

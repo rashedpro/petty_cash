@@ -27,6 +27,7 @@
   "remaining_amount",
   "section_break_zyjcs",
   "user_amount_details",
+  "section_break_s7fdx",
   "amended_from"
  ],
  "fields": [
@@ -156,6 +157,10 @@
   {
    "fieldname": "pc_clearance_total_section",
    "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "section_break_s7fdx",
+   "fieldtype": "Section Break"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -170,7 +175,7 @@
    "link_fieldname": "custom_pc_clearance_reference"
   }
  ],
- "modified": "2024-02-12 13:00:54.958449",
+ "modified": "2024-02-13 07:52:23.228548",
  "modified_by": "Administrator",
  "module": "Petty Cash",
  "name": "PC Clearance",
