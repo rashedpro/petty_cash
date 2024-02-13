@@ -150,8 +150,8 @@ function set_total_expense_without_taxes(frm) {
 	function add(accumulator,current) {
 		return accumulator+current.amount
 	}
-	frm.set_value('total_expense_without_tax',total_expense_without_tax)
-	hide_fields('total_expense_without_tax')
+	frm.set_value('total_expense_without_tax',total_expense_without_tax).then(hide_fields('total_expense_without_tax'))
+	
 }
 
 function remove_rows_from_stock_item_dialog(frm,clearance_detail_row_idx){
