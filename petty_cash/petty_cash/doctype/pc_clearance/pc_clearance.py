@@ -24,15 +24,17 @@ class PCClearance(Document):
 		self.set_previous_balance()
 		self.share_pc_clearance_with_user()
 	
-	def share_pc_clearance_with_user(self):
+	def after_insert(self):
+		self.share_pc_clearance_with_user(after_insert=1)
+
+	def share_pc_clearance_with_user(self,after_insert=0):
 		if self.owner==frappe.session.user:
 			for user_row in self.user_amount_details:
 				user_to_share=user_row.user
-				old_doc = self.get_doc_before_save()
-				if user_to_share and self.owner!=user_to_share and old_doc.shared_with_user==0:
-					shared_with_user=add(self.doctype, self.name, user=user_to_share, read=1, write=1, submit=0, share=0, everyone=0, notify=1)
-					user_row.shared_with_user=1
-					if shared_with_user:
+				if user_to_share and self.owner!=user_to_share and user_row.is_shared_with_user==0 and ((not self.is_new()) or after_insert==1):
+					is_shared_with_user=add(self.doctype, self.name, user=user_to_share, read=1, write=1, submit=0, share=0, everyone=0, notify=1)
+					user_row.is_shared_with_user=1
+					if is_shared_with_user:
 						frappe.msgprint(
 							_("PC Clearnace {0} is shared with {1} user").format(self.name,user_to_share),
 							alert=1,
