@@ -151,6 +151,7 @@ function set_total_expense_without_taxes(frm) {
 		return accumulator+current.amount
 	}
 	frm.set_value('total_expense_without_tax',total_expense_without_tax)
+	hide_fields('total_expense_without_tax')
 }
 
 function remove_rows_from_stock_item_dialog(frm,clearance_detail_row_idx){
@@ -344,6 +345,14 @@ function set_project(frm,cdt,cdn) {
 				}
 			})
 		}		
+	}
+}
+
+function hide_fields(fieldname) {
+	let current_user=frappe.session.user
+	let owner=frm.doc.owner
+	if (frm.is_new()!=1 && current_user!= owner) {
+		$('div[data-fieldname="total_expense_without_tax"]').addClass('hide-control')
 	}
 }
 
