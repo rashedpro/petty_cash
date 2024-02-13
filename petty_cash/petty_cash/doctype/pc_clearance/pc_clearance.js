@@ -390,14 +390,18 @@ function hide_all_fields_rows_for_non_creator(frm){
 		}
 
 		// hide total section fields
-		frm.fields_dict['total_expense_without_tax'].df.hidden=1
-		frm.fields_dict['total_expense'].df.hidden=1
-		frm.fields_dict['total_petty_cash'].df.hidden=1
-		frm.fields_dict['remaining_amount'].df.hidden=1
-		frm.refresh_field('total_expense_without_tax')
-		frm.refresh_field('total_expense')
-		frm.refresh_field('total_petty_cash')
-		frm.refresh_field('remaining_amount')
+		// frm.fields_dict['total_expense_without_tax'].df.hidden=1
+		// frm.fields_dict['total_expense'].df.hidden=1
+		// frm.fields_dict['total_petty_cash'].df.hidden=1
+		// frm.fields_dict['remaining_amount'].df.hidden=1
+		// frm.refresh_field('total_expense_without_tax')
+		// frm.refresh_field('total_expense')
+		// frm.refresh_field('total_petty_cash')
+		// frm.refresh_field('remaining_amount')
+		frm.set_df_property('total_expense_without_tax', 'hidden', 1);
+		frm.set_df_property('total_expense', 'hidden', 1);
+		frm.set_df_property('total_petty_cash', 'hidden', 1);
+		frm.set_df_property('remaining_amount', 'hidden', 1);
 
 		// $('div[data-fieldname="total_expense_without_tax"]').addClass('hide-control')
 		// $('div[data-fieldname="total_expense"]').addClass('hide-control')
