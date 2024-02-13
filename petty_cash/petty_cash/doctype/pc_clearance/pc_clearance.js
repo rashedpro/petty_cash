@@ -150,7 +150,7 @@ function set_total_expense_without_taxes(frm) {
 	function add(accumulator,current) {
 		return accumulator+current.amount
 	}
-	frm.set_value('total_expense_without_tax',total_expense_without_tax)
+	frm.set_value('total_expense_without_tax',total_expense_without_tax).then(hide_fields('total_expense_without_tax'))
 	
 }
 
