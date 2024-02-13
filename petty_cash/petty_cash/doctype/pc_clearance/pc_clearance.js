@@ -150,7 +150,7 @@ function set_total_expense_without_taxes(frm) {
 	function add(accumulator,current) {
 		return accumulator+current.amount
 	}
-	frm.set_value('total_expense_without_tax',total_expense_without_tax).then(hide_fields('total_expense_without_tax'))
+	frm.set_value('total_expense_without_tax',total_expense_without_tax)
 	
 }
 
@@ -390,9 +390,18 @@ function hide_all_fields_rows_for_non_creator(frm){
 		}
 
 		// hide total section fields
-		$('div[data-fieldname="total_expense_without_tax"]').addClass('hide-control')
-		$('div[data-fieldname="total_expense"]').addClass('hide-control')
-		$('div[data-fieldname="total_petty_cash"]').addClass('hide-control')
-		$('div[data-fieldname="remaining_amount"]').addClass('hide-control')
+		frm.fields_dict['total_expense_without_tax'].df.hidden=1
+		frm.fields_dict['total_expense'].df.hidden=1
+		frm.fields_dict['total_petty_cash'].df.hidden=1
+		frm.fields_dict['remaining_amount'].df.hidden=1
+		frm.refresh_field('total_expense_without_tax')
+		frm.refresh_field('total_expense')
+		frm.refresh_field('total_petty_cash')
+		frm.refresh_field('remaining_amount')
+
+		// $('div[data-fieldname="total_expense_without_tax"]').addClass('hide-control')
+		// $('div[data-fieldname="total_expense"]').addClass('hide-control')
+		// $('div[data-fieldname="total_petty_cash"]').addClass('hide-control')
+		// $('div[data-fieldname="remaining_amount"]').addClass('hide-control')
 	}
 }
