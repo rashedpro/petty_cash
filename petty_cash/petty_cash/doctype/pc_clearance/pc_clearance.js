@@ -352,7 +352,7 @@ function hide_fields(frm,fieldname) {
 	let current_user=frappe.session.user
 	let owner=frm.doc.owner
 	if (frm.is_new()!=1 && current_user!= owner) {
-		$('div[data-fieldname="total_expense_without_tax"]').addClass('hide-control')
+		$('div[data-fieldname="'+fieldname+'"]').addClass('hide-control')
 	}
 }
 
